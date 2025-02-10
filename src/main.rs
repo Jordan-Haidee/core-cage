@@ -24,14 +24,14 @@ fn set_process_affinity(process_id: u32, affinity_mask: u32) -> bool {
 
         // set process affinity
         let result = SetProcessAffinityMask(process_handle, affinity_mask);
-        return result == 0;
+        return result != 0;
     }
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
-    let process_id = args[0].parse::<u32>()?;
-    let affinity_mask = args[1].parse::<u32>()?;
+    let process_id = args[1].parse::<u32>()?;
+    let affinity_mask = args[2].parse::<u32>()?;
     if affinity_mask >= 1 << get_cpu_core_count() {
         println!("Invalid affinity mask.");
         return Ok(());
