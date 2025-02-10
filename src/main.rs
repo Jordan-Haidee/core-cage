@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cores = args[2].parse::<u32>()?;
     let cpu_count = get_cpu_core_count();
     if cores >= (1 << cpu_count) {
-        println!("Invalid affinity mask.");
+        println!("Invalid cores.");
         return Ok(());
     }
 
