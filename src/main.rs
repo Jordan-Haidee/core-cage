@@ -41,21 +41,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // randomly select cores
     let mut rng = rand::rng();
-    let range: Vec<u32> = (0..=(cpu_count - 1)).collect();
-    let random_samples: Vec<u32> = range
+    let range: Vec<u32> = (0..=cpu_count - 1).collect();
+    let mut random_samples: Vec<u32> = range
         .choose_multiple(&mut rng, cores as usize)
         .cloned()
         .collect();
+    random_samples.sort();
     let mut affinity_mask: u32 = 0;
-    for n in random_samples {
+    for n in random_samples.iter() {
         affinity_mask |= 1 << n;
     }
 
     // set process affinity
     if set_process_affinity(process_id, affinity_mask) {
-        println!("Process affinity set successfully.");
+        println!("Pin process {} at cores {:?}.", process_id, random_samples);
     } else {
-        println!("Failed to set process affinity.");
+        println!("Failed to pin process.");
     }
     Ok(())
 }
