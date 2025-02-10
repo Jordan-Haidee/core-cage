@@ -11,6 +11,11 @@ winapi = { "version" = "0.3.9", features = [
     "sysinfoapi",
 ] }
 
+
+[[bin]]
+name = "coca"
+path = "src/main.rs"
+
 [profile.release]
 opt-level = "z"
 lto = true

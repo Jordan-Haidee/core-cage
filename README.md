@@ -11,5 +11,5 @@ cargo install --git https://github.com/Jordan-Haidee/core-cage.git
 ## Usage
 
 ```powershell
-core-cage.exe 1234 3 # set process 1234 utilize 3 cores at most
+coca 1234 3 # pin process 1234 at 3 random cores
 ```
