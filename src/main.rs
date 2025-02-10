@@ -1,3 +1,4 @@
+use rand::seq::IndexedRandom;
 use winapi::um::{
     processthreadsapi::OpenProcess,
     sysinfoapi::{GetSystemInfo, SYSTEM_INFO},
@@ -31,12 +32,26 @@ fn set_process_affinity(process_id: u32, affinity_mask: u32) -> bool {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
     let process_id = args[1].parse::<u32>()?;
-    let affinity_mask = args[2].parse::<u32>()?;
-    if affinity_mask >= 1 << get_cpu_core_count() {
+    let cores = args[2].parse::<u32>()?;
+    let cpu_count = get_cpu_core_count();
+    if cores >= (1 << cpu_count) {
         println!("Invalid affinity mask.");
         return Ok(());
     }
 
+    // randomly select cores
+    let mut rng = rand::rng();
+    let range: Vec<u32> = (0..=(cpu_count - 1)).collect();
+    let random_samples: Vec<u32> = range
+        .choose_multiple(&mut rng, cores as usize)
+        .cloned()
+        .collect();
+    let mut affinity_mask: u32 = 0;
+    for n in random_samples {
+        affinity_mask |= 1 << n;
+    }
+
+    // set process affinity
     if set_process_affinity(process_id, affinity_mask) {
         println!("Process affinity set successfully.");
     } else {
